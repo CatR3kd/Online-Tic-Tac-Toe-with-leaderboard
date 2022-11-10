@@ -1,0 +1,169 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap');
+
+body, html{
+  overflow: hidden;
+}
+
+*{
+  font-family: 'Poppins';
+}
+
+#loginContainer{
+  background: #ffffff;
+  z-index: 100;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+}
+
+#login{
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+button:not(.square){
+  background: #ffffff;
+  border: 1px solid #000000;
+  border-radius: 5px;
+  padding: 6px 15px;
+  transition: 0.2s ease-out all;
+}
+
+button:not(.square):hover{
+  transform: scale(1.1);
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+
+button:not(.square):active{
+  transform: none;
+  box-shadow: none;
+}
+
+#content{
+  visibility: hidden;
+  text-align: center;    
+  margin: 0;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  position: absolute;
+}
+
+#waiting{
+  z-index: 99;
+  background-color: #00000080;
+  width: 110vw;
+  height: 110vh;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  filter: blur(3px);
+}
+
+#waitingTitle{
+  position: absolute;
+  left: 50%;
+  top: 40%;
+  transform: translate(-50%, -40%);
+  padding: 17px;
+  border-radius: 2px;
+  background-color: #00000080;
+  color: #ffffff;
+  z-index: 100;
+  filter: none;
+}
+
+#gameBoard{
+  width: 600px;
+	height: 600px;
+	margin: 0 auto;
+  margin-top: 25px;
+  background: transparent;
+  color: #000000;
+  border-radius: 10px;
+	display: grid;
+  grid-gap: 2px;
+	grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.square{
+  background: #78BEC5;
+  border: none;
+  border-radius: 15px;
+  font-weight: bold;
+  font-size: 4em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  outline: none;
+  color: #ffffff;
+  margin: 3px;
+  transition: 0.1s all;
+}
+
+.square[class*="test"]{
+  background: #000000;
+}
+
+.square:hover{
+  cursor: pointer;
+  background: #67999e;
+}
+
+#opponent{
+  top: 0;
+  right: 0;
+  position: absolute;
+  margin-top: 8px;
+  margin-right: 25px;
+  visibility: hidden;
+}
+
+#newGame{
+  bottom: 0;
+  right: 0;
+  position: absolute;
+  margin: 25px;
+  padding: 0px 20px;
+  visibility: hidden;
+}
+
+#leaderboard{
+  position: absolute;
+	top: 0;
+  left: 20px;
+  max-height: 280px;
+}
+
+#leaderboardTitle{
+  margin-bottom: 10px;
+}
+
+ol{
+  margin: 0;
+  padding-left: 25px;
+}
+
+.place:nth-of-type(1){
+  color: #FFD700;
+  font-size: 24px;
+  margin-bottom: 5px;
+}
+
+.place:nth-of-type(2){
+  color: #878787;
+}
+
+.place:nth-of-type(3){
+  color: #cd7f32;
+}
