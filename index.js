@@ -250,7 +250,7 @@ async function timeOut(match){
       io.to(players[match.turn].id).emit('timedOut', match);
       io.to(players[otherPlayer].id).emit('opponentTimedOut', match);
 
-      incrementUser(players[otherPlayer].username, -1);
+      incrementUser(players[otherPlayer].username, -2);
 
       playing.delete(players[0].id);
       playing.delete(players[1].id);
