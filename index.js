@@ -107,29 +107,9 @@ io.on('connection', (socket) => {
     }
   });
 
-  socket.on('disconnect', function() {
-    const username = socket.handshake.headers['x-replit-user-name'];
-    
-    if(queue.has(username)) queue.delete(username);
-    if(playing.has(socket.id)){
-      const matchID = playing.get(socket.id);
-      const match = matches.get(matchID);
-      const players = match.players;
-      const disconnectedPlayer = (players[0].username != username)? players[1] : players[0];
-      const otherPlayer = (players[0].username == username)? players[1] : players[0];
-      
-      playing.delete(socket.id);
-      playing.delete(otherPlayer.id);
-      matches.delete(matchID);
-      
-      incrementUser(disconnectedPlayer.username, -2);
-      io.to(otherPlayer.id).emit('opponentDisconnect');
-    }
-  });
-
   socket.on('playTurn', function(move) {
     // Make sure the match exists
-    if((!(move.match.id)) ||  (!(matches.has(move.match.id)))) return;
+    if((!(move.match.id)) || (!(matches.has(move.match.id)))) return;
     
     const match = matches.get(move.match.id);
 
@@ -194,6 +174,26 @@ io.on('connection', (socket) => {
 
     // Set timeout for turn length
     timeOut(match);
+  });
+
+  socket.on('disconnect', function() {
+    const username = socket.handshake.headers['x-replit-user-name'];
+    
+    if(queue.has(username)) queue.delete(username);
+    if(playing.has(socket.id)){
+      const matchID = playing.get(socket.id);
+      const match = matches.get(matchID);
+      const players = match.players;
+      const disconnectedPlayer = (players[0].username != username)? players[1] : players[0];
+      const otherPlayer = (players[0].username == username)? players[1] : players[0];
+      
+      playing.delete(socket.id);
+      playing.delete(otherPlayer.id);
+      matches.delete(matchID);
+      
+      incrementUser(disconnectedPlayer.username, -2);
+      io.to(otherPlayer.id).emit('opponentDisconnect');
+    }
   });
 });
 

@@ -53,18 +53,6 @@ button:not(.square):active{
   position: absolute;
 }
 
-#waiting{
-  z-index: 99;
-  background-color: #00000080;
-  width: 110vw;
-  height: 110vh;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  filter: blur(3px);
-}
-
 #waitingTitle{
   position: absolute;
   left: 50%;

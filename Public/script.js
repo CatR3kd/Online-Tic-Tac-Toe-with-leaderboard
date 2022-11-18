@@ -106,6 +106,7 @@ function updateBoard(board){
 }
 
 function playTurn(square){
+  if(!match) return;
   if(match.players[match.turn].username != username) return;
   if(match.board[square] != '') return;
   
