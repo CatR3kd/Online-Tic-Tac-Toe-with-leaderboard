@@ -77,6 +77,26 @@ socket.on('opponentDisconnect', function (){
   console.log('Opponent disconnected.');
 });
 
+socket.on('opponentTimedOut', function (){
+  document.getElementById('turn').innerText = 'Opponent ran out of time.';
+  document.getElementById('newGame').style.visibility = 'visible';
+  document.getElementById('opponent').style.visibility = 'hidden';
+  
+  console.log('Opponent ran out of time.');
+});
+
+socket.on('timedOut', function (){
+  document.getElementById('turn').innerText = 'You ran out of time!';
+  document.getElementById('newGame').style.visibility = 'visible';
+  document.getElementById('opponent').style.visibility = 'hidden';
+  
+  console.log('You ran out of time!');
+});
+
+socket.on('chatMsg', function (msgObj){
+  newChat(msgObj);
+});
+
 function updateBoard(board){
   const squares = document.getElementById('gameBoard').children;
     
@@ -138,3 +158,48 @@ function joinQueue(){
   
   socket.emit('joinQueue');
 }
+
+function sendChat(){
+  const input = document.getElementById('chatMessage');
+  const msg = input.value;
+  
+  if((msg.length < 1) || (msg.length > 99)) return;
+
+  socket.emit('sendChat', msg);
+  input.value = '';
+}
+
+function newChat(msgObj){
+  console.log(msgObj)
+  const sender = msgObj.sender;
+  const badgeColor = msgObj.badgeColor;
+  
+  const messages = document.getElementById('chat').children;
+
+  if(document.getElementById('chat').offsetHeight > 200){
+    (messages[0]).remove();
+  }
+
+  let li = document.createElement('li')
+  let badge = document.createElement('span')
+  let msg = document.createElement('msg')
+
+    
+  badge.innerText = `${sender}: `;
+  badge.style.color = msgObj.badgeColor;
+
+  msg.innerText = msgObj.msg;
+  li.appendChild(badge);
+  li.appendChild(msg);
+
+  document.getElementById('chat').appendChild(li);
+}
+
+// Send on enter
+
+document.getElementById('chatMessage').addEventListener('keyup', function(event) {
+  if(event.keyCode === 13){
+    event.preventDefault();
+    sendChat();
+  }
+});

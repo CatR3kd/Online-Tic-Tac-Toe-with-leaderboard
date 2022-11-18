@@ -6,7 +6,10 @@ const path = require('path');
 const Database = require("replitdb-client");
 const db = new Database();
 const fs = require('fs');
-db.empty();
+const Filter = require('bad-words');
+filter = new Filter();
+const { RateLimiterMemory } = require('rate-limiter-flexible');
+
 // Server
 
 http.listen(8000, () => {
@@ -14,6 +17,13 @@ http.listen(8000, () => {
 });
 
 app.use(express.static(path.join(__dirname + '/Public')));
+
+// Ratelimit for chat
+
+const sendChatRateLimit = new RateLimiterMemory({
+  points: 4,
+  duration: 2
+});
 
 // Leaderboard
 
@@ -45,7 +55,7 @@ class Match {
 io.on('connection', (socket) => {
   const username = socket.handshake.headers['x-replit-user-name'];
   
-  if((!username) || queue.has(username)){
+  if((!username) || queue.has(username) || playing.has(socket.id)){
     socket.disconnect();
   } else {
     socket.emit('loggedIn', username);
@@ -76,6 +86,25 @@ io.on('connection', (socket) => {
     queue.set(username, user);
     
     createMatches();
+  });
+
+  socket.on('sendChat', async function(msg) {
+    const username = socket.handshake.headers['x-replit-user-name'];
+    
+    try {
+      await sendChatRateLimit.consume(username);
+      
+      sendChat(username, msg);
+    } catch(rejRes) {
+      // Ratelimited
+      const chatObj = {
+        sender: 'System',
+        msg: 'Slow down!',
+        badgeColor: 'red'
+      }
+      
+      socket.emit('chatMsg', chatObj);
+    }
   });
 
   socket.on('disconnect', function() {
@@ -162,6 +191,9 @@ io.on('connection', (socket) => {
     
     io.to(players[0].id).emit('matchUpdate', match);
     io.to(players[1].id).emit('matchUpdate', match);
+
+    // Set timeout for turn length
+    timeOut(match);
   });
 });
 
@@ -203,6 +235,28 @@ function createMatches(){
       io.to(players[1].id).emit('joinedMatch', match);
     }
   }
+}
+
+// Timeout
+
+async function timeOut(match){
+  setTimeout(function(){
+    const newMatch = matches.get(match.id);
+    
+    if(newMatch == match){
+      const otherPlayer = (match.turn == 0)? 1 : 0;
+      
+      io.to(players[match.turn].id).emit('timedOut', match);
+      io.to(players[otherPlayer].id).emit('opponentTimedOut', match);
+
+      incrementUser(players[otherPlayer].username, -1);
+
+      playing.delete(players[0].id);
+      playing.delete(players[1].id);
+      
+      matches.delete(match.id);
+    }
+  }, 60_000);
 }
 
 // Game
@@ -335,4 +389,21 @@ function isEmpty(path) {
       return false;
     }
   return true;
+}
+
+// Chat
+
+function sendChat(username, msg){
+  if((msg.length < 1) || (msg.length > 99)) return;
+
+  let badgeColor = '#000000';
+  if(username == 'CatR3kd') badgeColor = '#54b382';
+
+  const msgObj = {
+    sender: username,
+    msg: filter.clean(msg),
+    badgeColor: badgeColor
+  }
+    
+  io.emit('chatMsg', msgObj);
 }

@@ -46,6 +46,15 @@
         <button class="square" id="8" onclick="playTurn(8);"></button>
       </div>
       <h1 id="turn">Your turn</h1>
+      <div id="chatBox">
+        <h3>Chat</h3>
+        <hr>
+        <ul id="chat">
+          <li><i>Welcome to the chat!</i></li>
+        </ul>
+        <input type="text" id="chatMessage"></input>
+        <button id="chatButton" onclick="sendChat();">Send</button>
+      </div>
     </div>
     <script src="https://replit.com/public/js/repl-auth-v2.js"></script>
     <script src="/socket.io/socket.io.js"></script>
