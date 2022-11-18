@@ -244,6 +244,7 @@ async function timeOut(match){
     const newMatch = matches.get(match.id);
     
     if(newMatch == match){
+      const players = match.players;
       const otherPlayer = (match.turn == 0)? 1 : 0;
       
       io.to(players[match.turn].id).emit('timedOut', match);
