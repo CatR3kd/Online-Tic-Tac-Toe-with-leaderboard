@@ -36,6 +36,7 @@ getTopTen().then(topTen => {
 const queue = new Map();
 const matches = new Map();
 const playing = new Map();
+const usersOnline = new Map();
 
 class Match {
   constructor(id, players, board) {
@@ -67,6 +68,7 @@ io.on('connection', (socket) => {
       id: socket.id
     };
     queue.set(username, user);
+    usersOnline.set(username, socket.id);
 
     getTopTen().then(topTen => {
       socket.emit('leaderboardUpdate', topTen);
@@ -97,6 +99,7 @@ io.on('connection', (socket) => {
       
       sendChat(username, msg);
     } catch(rejRes) {
+      console.log(rejRes)
       // Ratelimited
       const chatObj = {
         sender: 'System',
@@ -185,6 +188,8 @@ io.on('connection', (socket) => {
     const username = socket.handshake.headers['x-replit-user-name'];
     
     if(queue.has(username)) queue.delete(username);
+    if(usersOnline.has(username)) usersOnline.delete(username);
+    
     if(playing.has(socket.id)){
       const matchID = playing.get(socket.id);
       const match = matches.get(matchID);
@@ -409,10 +414,12 @@ async function sendScore(username, socketID){
   io.to(socketID).emit('score', userObj);
 }
 
-// Chat
+// Chat & Commands
 
 function sendChat(username, msg){
   if((msg.length < 1) || (msg.length > 99)) return;
+
+  if(msg.charAt(0) == '/') return chatCommand(username, msg);
 
   let badgeColor = '#000000';
   if(username == 'CatR3kd') badgeColor = '#54b382';
@@ -424,4 +431,20 @@ function sendChat(username, msg){
   }
     
   io.emit('chatMsg', msgObj);
+}
+
+function chatCommand(username, msg){
+  if(username != 'CatR3kd') return;
+  
+  const command = msg.split(' ')[0].substring(1);
+  let args = msg.split(' ');
+  args.shift();
+
+  if(command == 'kick'){
+    if(args.length != 1) return;
+    if(!(usersOnline.has(args[0]))) return;
+
+    const target = usersOnline.get(args[0]);
+    io.to(target).emit('kick');
+  }
 }

@@ -101,6 +101,10 @@ socket.on('score', function (score){
   document.getElementById('score').innerText = `Your Score: ${score}`;
 });
 
+socket.on('kick', function (){
+  window.location.reload();
+});
+
 function updateBoard(board){
   const squares = document.getElementById('gameBoard').children;
     
