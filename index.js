@@ -362,7 +362,7 @@ async function incrementUser(username, increment){
 
 async function getTopTen(){
   // If the leaderboard is empty, regenerate it
-  if(isEmpty('leaderboard.json')) return await sortLeaderboard();
+  if(isEmpty('leaderboard.json') != false) return await sortLeaderboard();
   
   const topTen = await fs.readFileSync('leaderboard.json');
   return JSON.parse(topTen);
