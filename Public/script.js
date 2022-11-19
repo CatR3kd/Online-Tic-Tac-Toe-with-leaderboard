@@ -97,6 +97,10 @@ socket.on('chatMsg', function (msgObj){
   newChat(msgObj);
 });
 
+socket.on('score', function (score){
+  document.getElementById('score').innerText = `Your Score: ${score}`;
+});
+
 function updateBoard(board){
   const squares = document.getElementById('gameBoard').children;
     

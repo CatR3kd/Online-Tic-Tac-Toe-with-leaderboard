@@ -60,6 +60,7 @@ io.on('connection', (socket) => {
   } else {
     socket.emit('loggedIn', username);
     createUser(username);
+    sendScore(username, socket.id);
   
     const user = {
       username: username,
@@ -147,6 +148,10 @@ io.on('connection', (socket) => {
       incrementUser(winner, 1);
       incrementUser(loser, -1);
 
+      sendScore(players[0].username, players[0].id);
+      sendScore(players[1].username, players[1].id);
+      
+
       playing.delete(players[0].id);
       playing.delete(players[1].id);
       
@@ -192,6 +197,8 @@ io.on('connection', (socket) => {
       matches.delete(matchID);
       
       incrementUser(disconnectedPlayer.username, -2);
+      sendScore(otherPlayer.username, otherPlayer.id);
+      
       io.to(otherPlayer.id).emit('opponentDisconnect');
     }
   });
@@ -251,6 +258,7 @@ async function timeOut(match){
       io.to(players[otherPlayer].id).emit('opponentTimedOut', match);
 
       incrementUser(players[otherPlayer].username, -2);
+      sendScore(players[otherPlayer].username, players[otherPlayer].id);
 
       playing.delete(players[0].id);
       playing.delete(players[1].id);
@@ -390,6 +398,15 @@ function isEmpty(path) {
       return false;
     }
   return true;
+}
+
+// Send score updates
+
+async function sendScore(username, socketID){
+  const userObj = await db.get(username);
+  if(userObj == undefined) return;
+  
+  io.to(socketID).emit('score', userObj);
 }
 
 // Chat
