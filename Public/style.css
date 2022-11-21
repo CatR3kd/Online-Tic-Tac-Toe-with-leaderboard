@@ -184,3 +184,10 @@ ol{
 #chat li {
 	max-width: 100%;
 }
+
+#plug{
+  position: absolute;
+  margin: 10px;
+  bottom: 0;
+  right: 0;
+}
