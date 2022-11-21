@@ -185,7 +185,7 @@ function newChat(msgObj){
   
   const messages = document.getElementById('chat').children;
 
-  if(document.getElementById('chat').offsetHeight > 200){
+  if(document.getElementById('chat').offsetHeight > 170){
     (messages[0]).remove();
   }
 
