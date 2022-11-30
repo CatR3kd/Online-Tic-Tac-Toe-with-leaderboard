@@ -1,11 +1,13 @@
 socket = io();
 let username;
+let userid;
 let leaderboard;
 let match;
 let opponent;
 
-socket.on('loggedIn', function (newUsername){
+socket.on('loggedIn', function (newUsername, newId){
   username = newUsername;
+  userid = newId;
   
   document.getElementById('loginContainer').style.visibility = 'hidden';
   document.getElementById('content').style.visibility = 'visible';
