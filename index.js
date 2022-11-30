@@ -447,4 +447,4 @@ function chatCommand(username, msg){
     const target = usersOnline.get(args[0]);
     io.to(target).emit('kick');
   }
-}
+} 
