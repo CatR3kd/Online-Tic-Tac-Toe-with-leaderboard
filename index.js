@@ -54,12 +54,13 @@ class Match {
 // Socket.io
 
 io.on('connection', (socket) => {
+	const userid = socket.handshake.headers['x-replit-user-id']
   const username = socket.handshake.headers['x-replit-user-name'];
-  
+
   if((!username) || queue.has(username) || playing.has(socket.id)){
     socket.disconnect();
   } else {
-    socket.emit('loggedIn', username);
+    socket.emit('loggedIn', username, userid);
     createUser(username);
     sendScore(username, socket.id);
   
@@ -93,11 +94,12 @@ io.on('connection', (socket) => {
 
   socket.on('sendChat', async function(msg) {
     const username = socket.handshake.headers['x-replit-user-name'];
+		const userid = socket.handshake.headers['x-replit-user-id']
     
     try {
       await sendChatRateLimit.consume(username);
       
-      sendChat(username, msg);
+      sendChat(username, msg, userid);
     } catch(rejRes) {
       console.log(rejRes)
       // Ratelimited
@@ -416,7 +418,7 @@ async function sendScore(username, socketID){
 
 // Chat & Commands
 
-function sendChat(username, msg){
+function sendChat(username, msg, userid){
   if((msg.length < 1) || (msg.length > 99)) return;
 
   if(msg.charAt(0) == '/') return chatCommand(username, msg);
@@ -426,6 +428,7 @@ function sendChat(username, msg){
 
   const msgObj = {
     sender: username,
+		senderid: userid,
     msg: filter.clean(msg),
     badgeColor: badgeColor
   }
