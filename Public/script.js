@@ -29,6 +29,11 @@ socket.on('joinedMatch', function (newMatch){
   opponent = (match.players[0].username != username)? match.players[0].username : match.players[1].username;
   opponentElem.innerText = `Opponent: ${opponent}`;
   opponentElem.style.visibility = 'visible';
+  
+  const itemElem = document.getElementById('itemType');
+  item = (match.players[0].username != username) ? 'X' : 'O';
+  itemElem.innerText = `You are: ${item}`;
+  itemElem.style.visibility = 'visible';
 
   document.getElementById('waitingContainer').style.visibility = 'hidden';
   document.getElementById('newGame').style.visibility = 'hidden';
