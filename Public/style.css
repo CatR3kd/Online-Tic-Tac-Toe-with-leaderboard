@@ -117,6 +117,15 @@ button:not(.square):active{
   visibility: hidden;
 }
 
+#itemType{
+  top: 0;
+  right: 0;
+  position: absolute;
+  margin-top: 38px;
+  margin-right: 25px;
+  visibility: hidden;
+}
+
 #newGame{
   bottom: 0;
   right: 0;

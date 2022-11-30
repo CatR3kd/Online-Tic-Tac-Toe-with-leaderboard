@@ -235,5 +235,4 @@ for (var i = 0; i < acc.length; i++) {
   });
   acc[i].classList.toggle("active");
   acc[i].nextElementSibling.style.display = "block";
-} 
-});
+}
